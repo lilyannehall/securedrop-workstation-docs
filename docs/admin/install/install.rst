@@ -7,7 +7,7 @@ Copy the submission key
 In order to decrypt submissions, your SecureDrop Workstation will need a copy of the secret key from your SecureDrop instance's SVS.
 
 .. note::
-   The copy of your SecureDrop submission secret key `cannot be protected with a passphrase <https://www.qubes-os.org/doc/split-gpg/#current-limitations>`_. To export a copy that does not require a passphrase, see :doc:`/admin/reference/removing_gpg_passphrase`.
+   Secret submission keys that are password-protected will need to have their password removed in order for SecureDrop Workstation to function properly. To export a copy that does not require a passphrase, see :doc:`/admin/reference/removing_gpg_passphrase`.
 
 To protect this key and preserve the air gap, you will need to connect the SVS USB to a Qubes VM with no network access, and copy it from there to ``dom0``. Note that you cannot directly copy and paste to the ``dom0`` VM from another VM - instead, follow the steps below to copy the file into ``dom0``:
 
