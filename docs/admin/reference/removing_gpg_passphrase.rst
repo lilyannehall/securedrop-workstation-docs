@@ -1,7 +1,7 @@
 Removing the Passphrase from a GPG Key
 ======================================
 
-First, in a ``dom0`` terminal on your Qubes workstation (and assuming the key is in a file ``sd-journalist.sec`` in your home directory), import the passphrase-protected secret key:
+First, in a ``dom0`` terminal on your Qubes workstation (Qubes Menu > ⚙️) > Other > Xfce Terminal) and assuming the key is in a file ``sd-journalist.sec`` in your home directory, import the passphrase-protected secret key:
 
 .. code-block:: sh
 
