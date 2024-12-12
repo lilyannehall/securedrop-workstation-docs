@@ -1,27 +1,42 @@
 Removing the Passphrase from a GPG Key
 ======================================
 
-First, note your secret key's ID. You can find it by running the command:
+First, in a ``dom0`` terminal on your Qubes workstation (and assuming the key is in a file ``sd-journalist.sec`` in your home directory), import the passphrase-protected secret key:
 
 .. code-block:: sh
 
-  gpg --list-secret-keys --keyid-format=long
+  export GPGTMP=`mktemp -d`    # create a tempdir
+  gpg --homedir=${GPGTMP} --pinentry=loopback --import sd-journalist.sec    
 
-This will show a list of keys known to GPG. Find the key you wish to remove the passphrase from - the ID will be in place of ``XXXX`` in the output example below.
-
-.. code-block:: sh
-
-  /home/username/.gnupg/secring.gpg
-  ----------------------------------
-  sec   4096R/XXXX <creation date>
-  uid                  name <email.address>
-  ssb   4096R/YYYY <creation date>
-
-Using the key ID in place of ``XXXX``, open the edit key dialogue by running:
+Next, check the key id:
 
 .. code-block:: sh
 
-    gpg --edit-key XXXX
+  gpg --homedir=${GPGTMP} --list-secret-keys --keyid-format=long
 
-GPG will display information about the key and a prompt. Type ``passwd`` into the prompt and press enter. You will be asked for the current passphrase, type it and press enter. When asked for the new passphrase, simply leave the prompt blank and press enter again. Depending on the version of GPG and your desktop environment, you may receive a warning. You can dismiss this and proceed anyway.
+The output should list the key with a line similar to:
 
+.. code-block:: sh
+
+  sec   rsa4096/XXXXXXXXXX <creation date>    
+
+The ``XXXXXXXXXX`` value is the key id, which you can use to open the key in edit mode with the following command:
+
+.. code-block:: sh
+
+  gpg --homedir=${GPGTMP} --pinentry=loopback --edit-key XXXXXXXXXX
+
+In the GPG interactive prompt, enter the command ``passwd`` to change the passphrase. You will first be prompted for the current passphrase, so enter that. Then, on the next prompt, just hit enter for a new blank passphrase, and enter again when prompted to repeat it. Then exit with the command ``quit``.
+
+You should now have a passphrase-less version of the key in the $GPGTMP keyring. To export it, use the following command with the same key id as above:
+
+.. code-block:: sh
+
+  gpg --homedir=${GPGTMP} --export-secret-key --armor XXXXXXXXXX > /tmp/nopassphrase.sec
+
+Verify that the new keyfile ``/tmp/nopassphrase.sec`` starts with the ``-----BEGIN PGP PRIVATE KEY BLOCK-----`` line. If it does, the export was successful. You can now copy it into place and check the config again with the commands:
+
+.. code-block:: sh
+
+  sudo cp /tmp/nopassphrase.sec /usr/share/securedrop-workstation-dom0-config/sd-journalist.sec
+  sdw-admin --validate
